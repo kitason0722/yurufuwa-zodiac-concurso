@@ -6,17 +6,17 @@ public class Bullet : MonoBehaviour
 {
     private int bulletspeed = 10;
     private Charactors_Control charactorsControl;
-    AudioSource aud;
-    public AudioClip pointSE;
+    BulletPool bulletPool;
     
     void Start()
     {
+        gameObject.SetActive(false);
+        bulletPool = transform.parent.GetComponent<BulletPool>();
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
         {
             charactorsControl = player.GetComponent<Charactors_Control>();
         }
-        this.aud = GetComponent<AudioSource>();
     }
     void Update()
     {
@@ -34,8 +34,14 @@ public class Bullet : MonoBehaviour
     {
         if (this.transform.position.x > 9)
         {
-            Destroy(this.gameObject);
+            bulletPool.Collect(this);
         }
+    }
+
+    public void ShowInStage(Vector3 _pos)
+    {
+        //追記　positionを渡された座標に設定
+        transform.position = _pos;
     }
 
     //bulletがPlayer以外にぶつかったら消滅
@@ -43,14 +49,13 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Bullet"))
         {
-            Destroy(this.gameObject);
+            bulletPool.Collect(this);
             Destroy(collision.gameObject);
         }
 
         else if(collision.gameObject.CompareTag("Enemy"))
         {
-            this.aud.PlayOneShot(this.pointSE);
-            Destroy(this.gameObject);
+            bulletPool.Collect(this);
             if(charactorsControl!=null)
             {
                 charactorsControl.score += 100;

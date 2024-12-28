@@ -11,6 +11,7 @@ public class Charactors_Control : MonoBehaviour
 	public GameObject bulletPosition;
 	public GameObject hpGauge;
 	private GameObject TimerText,ScoreText;
+	[SerializeField] BulletPool bulletPool;
 	public int hp = 3;
 	public int score = 0;
 	private float time = 0.0f,interval = 0.0f;
@@ -84,15 +85,14 @@ public class Charactors_Control : MonoBehaviour
 	//弾の撃ち出し処理
 	private void Shot()
 	{
-		if(this.interval>=0.3f)
+		if(this.interval>=0.2f)
 		{
 			if(Input.GetMouseButtonDown(0))
         	{
-        	    Instantiate(bulletPrefab, bulletPosition.transform.position, transform.rotation);
+        	    bulletPool.Fire(transform.position);
 				this.interval = 0.0f;
         	}
 		}
-		
 	}
 
 	void OnTriggerEnter(Collider other)
